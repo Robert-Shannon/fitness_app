@@ -9,11 +9,15 @@ dependencies = [
     "authlib>=1.4.1",
     "fastapi>=0.115.8",
     "pandas>=2.2.3",
+    "psycopg2>=2.9.10",
     "python-dotenv>=1.0.1",
     "requests>=2.32.3",
     "sqlalchemy>=2.0.38",
     "uvicorn>=0.34.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

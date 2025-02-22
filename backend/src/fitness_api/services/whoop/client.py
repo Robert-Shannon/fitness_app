@@ -238,7 +238,7 @@ class WhoopClient:
         return self._make_paginated_request(
             method="GET",
             url_slug="v1/cycle",
-            params={"start": start, "end": end, "limit": 25},
+            params={"start": start, "end": end},
         )
 
     def get_recovery_for_cycle(self, cycle_id: str) -> dict[str, Any]:
@@ -306,7 +306,7 @@ class WhoopClient:
         return self._make_paginated_request(
             method="GET",
             url_slug="v1/recovery",
-            params={"start": start, "end": end, "limit": 25},
+            params={"start": start, "end": end},
         )
 
     def get_sleep_by_id(self, sleep_id: str) -> dict[str, Any]:
@@ -379,7 +379,7 @@ class WhoopClient:
         return self._make_paginated_request(
             method="GET",
             url_slug="v1/activity/sleep",
-            params={"start": start, "end": end, "limit": 25},
+            params={"start": start, "end": end},
         )
 
     def get_workout_by_id(self, workout_id: str) -> dict[str, Any]:
@@ -459,7 +459,7 @@ class WhoopClient:
         return self._make_paginated_request(
             method="GET",
             url_slug="v1/activity/workout",
-            params={"start": start, "end": end, "limit": 25},
+            params={"start": start, "end": end},
         )
 
     ####################################################################################
@@ -532,23 +532,19 @@ class WhoopClient:
 
     def _format_dates(
         self, start_date: str | None, end_date: str | None
-    ) -> tuple[str, str]:
-        end = datetime.combine(
-            datetime.fromisoformat(end_date) if end_date else datetime.today(), time.max
-        )
-        start = datetime.combine(
-            datetime.fromisoformat(start_date)
-            if start_date
-            else datetime.today() - timedelta(days=6),
-            time.min,
-        )
+    ) -> tuple[str | None, str | None]:
+        """Format dates for API requests."""
+        if not start_date and not end_date:
+            return None, None
+            
+        if start_date:
+            start = datetime.fromisoformat(start_date).isoformat() + "Z"
+        else:
+            start = None
+            
+        if end_date:
+            end = datetime.fromisoformat(end_date).isoformat(timespec="seconds") + "Z"
+        else:
+            end = None
 
-        if start > end:
-            raise ValueError(
-                f"Start datetime greater than end datetime: {start} > {end}"
-            )
-
-        return (
-            start.isoformat() + "Z",
-            end.isoformat(timespec="seconds") + "Z",
-        )
+        return start, end
