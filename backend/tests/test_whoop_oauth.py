@@ -56,7 +56,7 @@ def test_whoop_auth():
         auth_params = {
             "client_id": client_id,
             "response_type": "code",
-            "scope": "offline read:profile read:workout read:sleep read:recovery",
+            "scope": "offline read:profile read:workout read:sleep read:recovery read:cycles read:body_measurement",
             "redirect_uri": redirect_uri,
             "state": state
         }
