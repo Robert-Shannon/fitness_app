@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from datetime import timedelta, datetime
 import jwt  # PyJWT
 from typing import Optional
+import logging
 
 from src.fitness_api.core.database import get_db
 from src.fitness_api.models.user import User
@@ -13,6 +14,14 @@ from src.fitness_api.core.config import Settings
 
 router = APIRouter()
 settings = Settings()
+
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
 # Dependency for token extraction
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
@@ -25,8 +34,18 @@ def get_user_by_email(db: Session, email: str) -> Optional[User]:
 
 def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
     user = get_user_by_email(db, email)
-    if not user or not verify_password(password, user.hashed_password):
+    if not user:
+        logger.info("User not found for email: %s", email)
         return None
+
+    logger.info("Provided password: %s", password)
+    logger.info("Stored hash: %s", user.hashed_password)
+    
+    if not pwd_context.verify(password, user.hashed_password):
+        logger.info("Verification failed for email: %s", email)
+        return None
+
+    logger.info("User %s authenticated successfully", email)
     return user
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
