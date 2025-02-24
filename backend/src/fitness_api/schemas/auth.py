@@ -11,11 +11,16 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: constr(min_length=8)
 
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    first_name: Optional[constr(min_length=1, max_length=50)] = None
+    last_name: Optional[constr(min_length=1, max_length=50)] = None
+
 class UserResponse(UserBase):
     id: int
     is_active: bool
     is_verified: bool
-    created_at: datetime
+    created_at: Optional[datetime] 
     
     class Config:
         from_attributes = True
