@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from src.fitness_api.api.v1.endpoints.auth import whoop as whoop_auth
 from src.fitness_api.api.v1.endpoints.auth import users as users_auth
+from src.fitness_api.api.v1.endpoints.auth import login as login_auth
 
 app = FastAPI(
     title="Fitness Dashboard API",
@@ -20,4 +21,10 @@ app.include_router(
     users_auth.router,
     prefix="/api/v1/auth",
     tags=["users"]
+)
+
+app.include_router(
+    login_auth.router,
+    prefix="/api/v1/auth",
+    tags=["login"]
 )
