@@ -1,5 +1,3 @@
-# src/fitness_api/api/v1/endpoints/auth/whoop.py
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional
@@ -11,6 +9,9 @@ from src.fitness_api.services.whoop.oauth import WhoopOAuthHandler, WhoopOAuthEr
 
 settings = Settings()
 router = APIRouter()
+
+# If you have a WHOOP_REDIRECT_URI setting, use it; otherwise, default to the Whoop examples page.
+DEFAULT_REDIRECT_URI = getattr(settings, "WHOOP_REDIRECT_URI", "https://www.whoop.com/us/en/examples/")
 
 oauth_handler = WhoopOAuthHandler(
     client_id=settings.WHOOP_CLIENT_ID,
@@ -24,6 +25,9 @@ async def authorize_whoop(db: Session = Depends(get_db)):
     Returns the authorization URL for the frontend to redirect to.
     """
     try:
+        # Ensure the redirect URI is set in the OAuth handler if needed.
+        oauth_handler.redirect_uri = DEFAULT_REDIRECT_URI
+
         # Get the authorization URL and state
         auth_url, state = oauth_handler.get_authorization_url()
         
@@ -51,6 +55,9 @@ async def whoop_callback(
     Exchanges auth code for tokens and stores them in the database.
     """
     try:
+        # Set the redirect URI on the handler before exchanging the code.
+        oauth_handler.redirect_uri = DEFAULT_REDIRECT_URI
+
         # Exchange code for tokens
         token_data = oauth_handler.exchange_code_for_token(code)
         
@@ -96,7 +103,7 @@ async def refresh_whoop_token(
     db: Session = Depends(get_db)
 ):
     """
-    Refresh Whoop access token using stored refresh token
+    Refresh Whoop access token using stored refresh token.
     """
     try:
         auth_service = AuthService(db)
@@ -136,7 +143,7 @@ async def disconnect_whoop(
     db: Session = Depends(get_db)
 ):
     """
-    Disconnect Whoop integration by removing stored tokens
+    Disconnect Whoop integration by removing stored tokens.
     """
     try:
         auth_service = AuthService(db)
