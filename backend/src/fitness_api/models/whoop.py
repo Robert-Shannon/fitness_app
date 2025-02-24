@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import enum
 
-Base = declarative_base()
+from .base import Base
 
 class WhoopScoreState(enum.Enum):
     SCORED = "SCORED"

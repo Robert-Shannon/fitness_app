@@ -1,11 +1,15 @@
 from fastapi import FastAPI
-from fitness_api.api.v1.endpoints import whoop
+from .api.v1.endpoints.auth import whoop as whoop_auth
 
-app = FastAPI(title="Fitness Dashboard API")
+app = FastAPI(
+    title="Fitness Dashboard API",
+    description="API for managing fitness data from various sources",
+    version="1.0.0"
+)
 
-# Include Whoop routes
+# Include routers
 app.include_router(
-    whoop.router,
-    prefix="/api/v1/whoop",
-    tags=["whoop"]
+    whoop_auth.router,
+    prefix="/api/v1/auth",
+    tags=["auth"]
 )

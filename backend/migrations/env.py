@@ -6,18 +6,19 @@ from sqlalchemy import pool
 from alembic import context
 
 
-from src.fitness_api.models.user import Base
-
+# Import shared Base and all models
+from src.fitness_api.models.base import Base
+from src.fitness_api.models.user import User, WhoopOAuthConnection, StravaOAuthConnection, GarminOAuthConnection
 from src.fitness_api.models.whoop import (
-    WhoopUser, 
-    WhoopWorkout, 
-    WhoopSleep, 
-    WhoopRecovery, 
-    WhoopCycle, 
-    WhoopScoreState, 
-    WhoopSport,
-    Base
+    WhoopUser,
+    WhoopWorkout,
+    WhoopSleep,
+    WhoopRecovery,
+    WhoopCycle,
+    WhoopScoreState,
+    WhoopSport
 )
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
